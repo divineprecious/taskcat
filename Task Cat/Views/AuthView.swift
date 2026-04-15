@@ -3,7 +3,7 @@ import SwiftUI
 struct AuthView: View {
     @State private var email: String = ""
     @State private var password: String = ""
-    @State private var navigateToToday = false
+    @Binding var isAuthenticated: Bool
     
     let testEmail = "test@test.com"
     let testPassword = "password123"
@@ -53,9 +53,6 @@ struct AuthView: View {
                 .foregroundColor(.white)
                 .background(Color.purple)
                 .cornerRadius(18)
-                .navigationDestination(isPresented: $navigateToToday) {
-                    TodayView()
-                }
             }
             .padding(.vertical, 15)
         }
@@ -63,12 +60,7 @@ struct AuthView: View {
     
     func loginUser() {
         if email == testEmail && password == testPassword {
-            navigateToToday = true
+            isAuthenticated = true
         }
     }
-}
-
-#Preview {
-    AuthView()
-        .preferredColorScheme(ColorScheme.dark)
 }
