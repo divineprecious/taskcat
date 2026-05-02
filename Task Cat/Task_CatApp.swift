@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 @main
 struct Task_CatApp: App {
@@ -6,6 +7,11 @@ struct Task_CatApp: App {
         WindowGroup {
             ContentView()
                 .preferredColorScheme(ColorScheme.dark)
+                .modelContainer(for: [
+                    Category.self,
+                    DemoProfile.self,
+                    Task.self
+                ])
         }
     }
 }

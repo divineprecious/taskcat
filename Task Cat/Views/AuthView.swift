@@ -1,13 +1,15 @@
 import SwiftUI
+import SwiftData
 
 struct AuthView: View {
     @State private var email: String = ""
     @State private var password: String = ""
-    @Binding var isAuthenticated: Bool
+    @Environment(\.modelContext) var context
     
     let testEmail = "test@test.com"
     let testPassword = "password123"
     
+    var onLogin: () -> Void
     
     var body: some View {
         VStack {
@@ -46,7 +48,7 @@ struct AuthView: View {
                 )
             VStack {
                 Button("Sign In") {
-                    loginUser()
+                    onLogin()
                 }
                 .frame(maxWidth: .infinity)
                 .padding()
@@ -58,9 +60,5 @@ struct AuthView: View {
         }
     }
     
-    func loginUser() {
-        if email == testEmail && password == testPassword {
-            isAuthenticated = true
-        }
-    }
+    
 }

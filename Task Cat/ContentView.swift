@@ -1,9 +1,18 @@
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
     @State private var isAuthenticated = false
+    @Query() var categories: [Category]
+    
     var body: some View {
-        if isAuthenticated {
+        if !isAuthenticated {
+            AuthView(onLogin: {isAuthenticated = true})
+        }
+        else if categories.isEmpty {
+            OnboardingView()
+        }
+        else {
             TabView {
                 Tab("Today", systemImage: "list.bullet.clipboard") {
                     TodayView()
@@ -21,9 +30,6 @@ struct ContentView: View {
                 }
             }
             .tint(Color.purple)
-        }
-        else {
-            AuthView(isAuthenticated: $isAuthenticated)
         }
     }
 }
