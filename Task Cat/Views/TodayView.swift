@@ -9,7 +9,6 @@ struct TodayView: View {
             Text("Today's Tasks")
                 .font(.title)
                 .padding()
-            //Sample Example for How to Get Categories
             List {
                 ForEach(tasks) { task in
                     VStack(alignment: .leading) {
