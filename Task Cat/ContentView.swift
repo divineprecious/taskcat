@@ -1,40 +1,78 @@
 import SwiftUI
 import SwiftData
 
+
 struct ContentView: View {
+
+
     @State private var isAuthenticated = false
-    @Query() var categories: [Category]
-    
+
+
+    @Environment(\.modelContext) private var context
+    @Query var categories: [Category]
+    @Query var tasks: [Task]
+
+
     var body: some View {
+
+
         if !isAuthenticated {
-            AuthView(onLogin: {isAuthenticated = true})
-        }
-        else if categories.isEmpty {
+            AuthView(onLogin: {
+                isAuthenticated = true
+            })
+
+
+        } else if categories.isEmpty {
             OnboardingView()
-        }
-        else {
+
+
+        } else {
+
+
             TabView {
+
+
+                Tab("Create", systemImage: "plus") {
+                    CreateTaskView()
+                }
+
+
                 Tab("Today", systemImage: "list.bullet.clipboard") {
                     TodayView()
                 }
-                
+
+
                 Tab("Upcoming", systemImage: "calendar") {
                     UpcomingView()
                 }
-                
+
+
                 Tab("Cat Care", systemImage: "pawprint") {
                     CatView()
                 }
+
+
                 Tab("Settings", systemImage: "gear") {
                     SettingsView()
                 }
             }
-            .tint(Color.purple)
+            .tint(.purple)
+
+
+            // Reset tasks on fresh launch
+            .onAppear {
+                for task in tasks {
+                    context.delete(task)
+                }
+            }
         }
     }
 }
+
 
 #Preview {
     ContentView()
         .preferredColorScheme(ColorScheme.dark)
 }
+
+

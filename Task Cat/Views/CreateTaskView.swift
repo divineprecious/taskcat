@@ -2,34 +2,48 @@ import SwiftUI
 import SwiftData
 
 struct CreateTaskView: View {
-    @State private var tasks: [String] = []
-    @State private var newTask = ""
-    @Query var categories: [Category]
+
+    @State private var title = ""
+    @State private var energyLevel = 1
+    @State private var dueDate = Date()
+
+    @Environment(\.modelContext) private var context
+    @Query var tasks: [Task]
 
     var body: some View {
-        VStack {
-            TextField("New Task", text: $newTask)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
+        VStack(spacing: 20) {
+
+            TextField("Task Title", text: $title)
+                .textFieldStyle(.roundedBorder)
+                .padding()
+
+            Stepper("Energy Level: \(energyLevel)", value: $energyLevel, in: 1...5)
+                .padding()
+
+            DatePicker("Due Date", selection: $dueDate)
                 .padding()
 
             Button("Add Task") {
-                if !newTask.isEmpty {
-                    tasks.append(newTask)
-                    newTask = ""
-                }
-            }
-            List {
-                ForEach(categories) {
-                    Text($0.name)
+                if !title.isEmpty {
+                    let newTask = Task(
+                        title: title,
+                        dueDate: dueDate,
+                        energyLevel: energyLevel
+                    )
+                    context.insert(newTask)
+                    title = ""
                 }
             }
 
             List {
-                ForEach(tasks, id: \.self) { task in
-                    Text(task)
-                }
-                .onDelete { indexSet in
-                    tasks.remove(atOffsets: indexSet)
+                ForEach(tasks) { task in
+                    VStack(alignment: .leading) {
+                        Text(task.title)
+                        Text("Energy: \(task.energyLevel)")
+                            .font(.caption)
+                        Text(task.dueDate.formatted())
+                            .font(.caption2)
+                    }
                 }
             }
         }
@@ -38,6 +52,5 @@ struct CreateTaskView: View {
 
 #Preview {
     CreateTaskView()
-        .preferredColorScheme(ColorScheme.dark)
 }
 

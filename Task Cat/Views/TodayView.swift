@@ -2,21 +2,30 @@ import SwiftUI
 import SwiftData
 
 struct TodayView: View {
-    @Query var categories: [Category]
+    @Query var tasks: [Task]
     
     var body: some View {
         VStack {
             Text("Today's Tasks")
+                .font(.title)
+                .padding()
             //Sample Example for How to Get Categories
             List {
-                ForEach(categories) {
-                    Text($0.name)
+                ForEach(tasks) { task in
+                    VStack(alignment: .leading) {
+                        Text(task.title)
+                        Text("Energy: \(task.energyLevel)")
+                            .font(.caption)
+                    }
+                }
+            
+
                 }
             }
         }
-        .navigationBarBackButtonHidden(true)
+
     }
-}
+
 
 #Preview {
     TodayView()
