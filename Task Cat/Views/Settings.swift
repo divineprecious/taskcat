@@ -5,7 +5,7 @@ struct SettingsView: View {
     let moonGray = Color(white: 0.5, opacity: 0.7)
     
     @Query var profiles: [DemoProfile]
-    @Environment(\.modelContext) private var context
+    
     
     @State private var confirmation = false
     @State private var newName = ""
