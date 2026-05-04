@@ -2,6 +2,8 @@ import SwiftUI
 import SwiftData
 
 struct TasksView: View {
+    
+    @Environment(\.modelContext) private var context
     @Query(sort: \Task.dueDate) var tasks: [Task]
     
     var body: some View {
@@ -11,19 +13,34 @@ struct TasksView: View {
                 .padding()
             List {
                 ForEach(tasks) { task in
-                    VStack(alignment: .leading) {
-                        Text(task.title)
-                        Text("Energy: \(task.energyLevel)")
-                            .font(.caption)
+                    HStack {
+                        Button(action: {
+                            task.isCompleted.toggle()
+                        }) {
+                            Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
+                        }
+                        VStack(alignment: .leading) {
+                            Text(task.title)
+                                .strikethrough(task.isCompleted)
+                            
+                            Text("Energy: \(task.energyLevel)")
+                                .font(.caption)
+                            
+                            Text(task.dueDate.formatted(date: .abbreviated, time: .omitted))
+                                .font(.caption2)
+                        }
+                        Spacer()
+                        
+                        Button(action: {
+                            context.delete(task)
+                        }) {
+                            Image(systemName: "trash")
+                            
+                        }
                     }
                 }
             }
         }
     }
-}
-
-#Preview {
-    TasksView()
-        .modelContainer(for: [Task.self, DemoProfile.self, Category.self], inMemory: true)
-        .preferredColorScheme(ColorScheme.dark)
+    
 }
