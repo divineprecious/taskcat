@@ -1,10 +1,14 @@
 import SwiftUI
 import SwiftData
 
+@Observable
+class CatName {
+    var name: String = ""
+}
 
 struct ContentView: View {
 
-
+    @State private var name = CatName()
     @State private var isAuthenticated = false
 
 
@@ -37,15 +41,9 @@ struct ContentView: View {
                 }
 
 
-                Tab("Today", systemImage: "list.bullet.clipboard") {
-                    TodayView()
+                Tab("Tasks", systemImage: "list.bullet.clipboard") {
+                    TasksView()
                 }
-
-
-                Tab("Upcoming", systemImage: "calendar") {
-                    UpcomingView()
-                }
-
 
                 Tab("Cat Care", systemImage: "pawprint") {
                     CatView()

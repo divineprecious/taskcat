@@ -3,7 +3,7 @@ import SwiftData
 
 struct OnboardingView: View {
     
-    @State private var name: String = ""
+    @State private var catName: String = ""
     @Environment(\.modelContext) var context
     
     var body: some View {
@@ -16,7 +16,7 @@ struct OnboardingView: View {
                 .font(.largeTitle)
                 .bold()
                 
-            TextField("Cat Name", text: $name)
+            TextField("Cat Name", text: $catName)
                 .textFieldStyle(.roundedBorder)
                 .overlay (
                     RoundedRectangle(cornerRadius: 8)
@@ -45,7 +45,7 @@ struct OnboardingView: View {
             Category(name: "Work"),
             Category(name: "Personal"),]
         
-        var newProfile = DemoProfile(catName: name)
+        let newProfile = DemoProfile(catName: catName)
         
         for category in categories {
             context.insert(category)
@@ -58,6 +58,7 @@ struct OnboardingView: View {
 
 #Preview {
     OnboardingView()
+        .modelContainer(for: [DemoProfile.self, Category.self], inMemory: true)
         .preferredColorScheme(ColorScheme.dark)
 }
 

@@ -1,18 +1,29 @@
 import SwiftUI
+import SwiftData
 
 struct CatView: View {
     let moonGray = Color(white: 0.5, opacity: 0.7)
     
-    @State private var catName = "Colonel Paws"
+    @Query var profiles: [DemoProfile]
     @State private var catImg = "cat_default"
-    
     @State private var heart = 0
     @State private var energy = 0
 
-    var body: some View {
+    func catInteraction(heartGain: Int, energyCost: Int, image: String){
+        heart = min(heart + heartGain, 100)
+        energy = max(energy - energyCost, 0)
         
+        catImg = image
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0){
+            catImg = "cat_default"
+        }
+    }
+
+    var body: some View {
+                
         VStack {
-            Text("\(catName)")
+            Text(profiles.first?.catName ?? "Cat")
                 .font(.title)
                 .bold()
                 .foregroundStyle(.purple)
@@ -42,54 +53,52 @@ struct CatView: View {
                 .padding()
             
             HStack{
-                Button(action: {heart+=1; energy-=1; if heart >= 100 {heart = 100};
-                    catImg = "cat_eat";
-                    DispatchQueue.main.asyncAfter(deadline:.now() + 1.0){
-                        catImg = "cat_default"};
-                }){
-                    VStack{
+                
+                Button {
+                    catInteraction(heartGain: 1, energyCost: 1, image: "cat_eat")
+                } label: {
+                    VStack {
                         Text("Feed")
                         Label("1", systemImage: "bolt.fill")
                     }
-                }//Button
+                }
                 .disabled(energy < 1)
-
-                Button(action: {heart+=2; energy-=2; if heart >= 100 {heart = 100};
-                    catImg = "cat_pet";
-                    DispatchQueue.main.asyncAfter(deadline:.now() + 1.0){
-                        catImg = "cat_default"};
-                    }){
-                    VStack{
+                //Button
+                
+                Button{
+                    catInteraction(heartGain: 2, energyCost: 2, image: "cat_pet")
+                } label: {
+                    VStack {
                         Text("Pet")
                         Label("2", systemImage: "bolt.fill")
                     }
-                }//Button
+                }
                 .disabled(energy < 2)
+                //Button
                 
-                Button(action: {heart+=3; energy-=3; if heart >= 100 {heart = 100};
-                    catImg = "cat_treat";
-                    DispatchQueue.main.asyncAfter(deadline:.now() + 1.0){
-                        catImg = "cat_default"};
-                    }){
-                    VStack{
+                Button{
+                    catInteraction(heartGain: 3, energyCost: 3, image: "cat_treat")
+                } label: {
+                    VStack {
                         Text("Treat")
                         Label("3", systemImage: "bolt.fill")
                     }
-                }//Button
+                }
                 .disabled(energy < 3)
+                //Button
                 
-                Button(action: {heart+=5; energy-=5; if heart >= 100 {heart = 100};
-                    catImg = "cat_play";
-                    DispatchQueue.main.asyncAfter(deadline:.now() + 1.0){
-                        catImg = "cat_default"};
-                    }){
-                    VStack{
+                Button{
+                    catInteraction(heartGain: 5, energyCost: 5, image: "cat_play")
+                } label: {
+                    VStack {
                         Text("Play")
                         Label("5", systemImage: "bolt.fill")
                     }
-                }//Button
+                }
                 .disabled(energy < 5)
-
+                //Button
+                
+                
             }//HStack
             .controlSize(.large)
             .buttonStyle(.borderedProminent)
@@ -104,5 +113,6 @@ struct CatView: View {
 
 #Preview {
     CatView()
+        .modelContainer(for: DemoProfile.self, inMemory: true)
         .preferredColorScheme(ColorScheme.dark)
 }

@@ -8,7 +8,7 @@ struct CreateTaskView: View {
     @State private var dueDate = Date()
 
     @Environment(\.modelContext) private var context
-    @Query var tasks: [Task]
+    @Query(sort: \Task.dueDate) var tasks: [Task]
 
     var body: some View {
         VStack(spacing: 20) {
@@ -52,5 +52,5 @@ struct CreateTaskView: View {
 
 #Preview {
     CreateTaskView()
+        .modelContainer(for: Task.self, inMemory: true)
 }
-

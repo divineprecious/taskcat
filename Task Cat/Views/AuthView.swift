@@ -59,6 +59,4 @@ struct AuthView: View {
             .padding(.vertical, 15)
         }
     }
-    
-    
 }
