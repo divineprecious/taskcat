@@ -5,53 +5,54 @@ struct SettingsView: View {
     let moonGray = Color(white: 0.5, opacity: 0.7)
     
     @Query var profiles: [DemoProfile]
+    @Environment(\.modelContext) private var modelContext
     
-    
-    @State private var confirmation = false
+    @State private var renameCat = false
+    @State private var deleteConfirmation = false
     @State private var newName = ""
-    @State private var isRenaming = false
     
     var body: some View {
         VStack {
             Text("Settings")
-                .font(.title)
+                .font(.largeTitle)
                 .navigationBarBackButtonHidden(true)
             
+            Spacer()
+            
             Button("Rename Cat"){
-                newName = profiles.first?.catName ?? "Cat"
-                isRenaming.toggle()
+                renameCat = true
             }//Button
+            .padding()
+            .alert("Enter new name:", isPresented: $renameCat){
+                TextField("New name", text: $newName)
+                Button("OK"){
+                    if let profile = profiles.first {
+                        profile.catName = newName
+                    }//if
+                    newName = ""
+                }//Button
+                Button("Cancel", role: .cancel){}
+            }//Alert
             
             Button("Delete Account"){
-                
+                deleteConfirmation = true
             }//Button
+            .padding()
+            .alert("Delete Account?", isPresented: $deleteConfirmation){
+                Button("Delete", role: .destructive) {
+                    for profile in profiles {
+                        modelContext.delete(profile)
+                    }
+                }
+                Button("Cancel", role: .cancel){}
+            }//Alert
             
-            if isRenaming {
-                VStack {
-                    TextField("Enter new name", text: $newName)
-                        .textFieldStyle(.roundedBorder)
-                        .padding()
-                    
-                    HStack {
-                        Button("Cancel") {
-                            isRenaming = false
-                        }//Button
-                        
-                        Button("Save") {
-                            if let profile = profiles.first {
-                                profile.catName = newName
-                            }
-                            isRenaming = false
-                        }//Button
-                        .buttonStyle(.borderedProminent)
-                    }//HStack
-                }//VStack
-            }//If statement
+            Spacer()
+            
         }//VStack
         .controlSize(.large)
         .buttonStyle(.borderedProminent)
         .buttonBorderShape(.roundedRectangle(radius: 10))
-        .tint(moonGray)
     }//Body
 }//Struct
 #Preview {
