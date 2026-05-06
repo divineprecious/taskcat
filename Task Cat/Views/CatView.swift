@@ -6,13 +6,16 @@ struct CatView: View {
     
     @Query var profiles: [DemoProfile]
     @State private var catImg = "cat_default"
+    @Environment(\.modelContext) private var context
+    
+    
     @State private var heart = 0
-    @State private var energy = 0
 
     func catInteraction(heartGain: Int, energyCost: Int, image: String){
         heart = min(heart + heartGain, 100)
-        energy = max(energy - energyCost, 0)
-        
+        guard let profile = profiles.first else { return }
+        profile.totalEnergy -= energyCost
+        try? context.save()
         catImg = image
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0){
@@ -38,10 +41,11 @@ struct CatView: View {
                 
                 Spacer()
                 
-                Label("\(energy)", systemImage: "bolt.fill")
+                Label("\(profiles.first?.totalEnergy ?? 0)",systemImage: "bolt.fill")
                     .foregroundStyle(.yellow)
                     .frame(width: 100, height: 40)
                     .background(Capsule().fill(moonGray))
+                
             }//HStack
             .font(.title)
             .padding(25)
@@ -62,7 +66,6 @@ struct CatView: View {
                         Label("1", systemImage: "bolt.fill")
                     }
                 }
-                .disabled(energy < 1)
                 //Button
                 
                 Button{
@@ -73,7 +76,6 @@ struct CatView: View {
                         Label("2", systemImage: "bolt.fill")
                     }
                 }
-                .disabled(energy < 2)
                 //Button
                 
                 Button{
@@ -84,7 +86,6 @@ struct CatView: View {
                         Label("3", systemImage: "bolt.fill")
                     }
                 }
-                .disabled(energy < 3)
                 //Button
                 
                 Button{
@@ -95,7 +96,6 @@ struct CatView: View {
                         Label("5", systemImage: "bolt.fill")
                     }
                 }
-                .disabled(energy < 5)
                 //Button
                 
                 

@@ -5,6 +5,7 @@ struct TasksView: View {
     
     @Environment(\.modelContext) private var context
     @Query(sort: \Task.dueDate) var tasks: [Task]
+    @Query var profiles: [DemoProfile]
     
     var body: some View {
         VStack {
@@ -16,6 +17,11 @@ struct TasksView: View {
                     HStack {
                         Button(action: {
                             task.isCompleted.toggle()
+                            
+                            if let profile = profiles.first {
+                                profile.totalEnergy += task.isCompleted ? task.energyLevel : -task.energyLevel
+                            }
+                            try? context.save()
                         }) {
                             Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
                         }
@@ -33,6 +39,7 @@ struct TasksView: View {
                         
                         Button(action: {
                             context.delete(task)
+                            try? context.save()
                         }) {
                             Image(systemName: "trash")
                             
@@ -43,4 +50,8 @@ struct TasksView: View {
         }
     }
     
+}
+
+#Preview {
+    TasksView()
 }
